@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.eclipse.rdf4j.query.TupleQueryResult;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.vocabulary.PROV;
 import org.eclipse.rdf4j.query.QueryResults;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.sparql.SPARQLRepository;
@@ -39,21 +41,21 @@ public class SparqlDriver {
         connection.prepareUpdate(statement.getQueryString()).execute();
     }
 
-    public List<String> getEntities() {
+    public List<String> getLabels(IRI type) {
         String query = """
             PREFIX prov: <http://www.w3.org/ns/prov#>
             PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
             PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-            SELECT ?id WHERE {
-                ?entity rdf:type prov:Entity ;
-                    rdfs:label ?id .
+            SELECT ?label WHERE {
+                ?entity rdf:type %s ;
+                    rdfs:label ?label .
             }
-            ORDER BY ?id
-                """;
+            ORDER BY ?label
+        """.formatted(PROV.PREFIX + ":" + type.getLocalName());
 
         try (TupleQueryResult result = connection.prepareTupleQuery(query).evaluate()) {
             return QueryResults.stream(result)
-                .map(bs -> bs.getValue("id").stringValue())
+                .map(bs -> bs.getValue("label").stringValue())
                 .collect(Collectors.toList());
         }
     }

@@ -2,6 +2,7 @@ package com.provframework.api;
 
 import java.util.List;
 
+import org.eclipse.rdf4j.model.vocabulary.PROV;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,8 +18,18 @@ public class ProvController {
         this.sparqlDriver = sparqlDriver;
     }
 
-    @GetMapping("entities")
+    @GetMapping("list/entities")
     public List<String> listEntities() {
-        return this.sparqlDriver.getEntities();
+        return this.sparqlDriver.getLabels(PROV.ENTITY);
+    }
+
+    @GetMapping("list/activities")
+    public List<String> listActivities() {
+        return this.sparqlDriver.getLabels(PROV.ACTIVITY);
+    }
+
+    @GetMapping("list/agents")
+    public List<String> listAgents() {
+        return this.sparqlDriver.getLabels(PROV.AGENT);
     }
 }
