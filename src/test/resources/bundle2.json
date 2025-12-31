@@ -1,0 +1,8 @@
+{
+    "entities": [ {
+        "id": "Entity 2",
+        "wasDerivedFrom": [ "Entity 1" ],
+        "wasAttributedTo": [ "Person Agent" ],
+        "wasGeneratedBy": [ "Activity 2" ]
+    }]
+}

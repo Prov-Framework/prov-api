@@ -1,0 +1,89 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.5.7'
+	id 'io.spring.dependency-management' version '1.1.7'
+	id 'jacoco'
+	id "org.sonarqube" version "7.0.1.6134"
+}
+
+group = 'com.provframework'
+version = '0.1.0'
+description = 'Service for retrieving provenance data.'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	//Spring Boot
+	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	//Open API (Swagger)
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6'
+
+	//Prov
+	implementation files('libs/prov-builder-java-1.0.0.jar')
+
+	// OpenCypher
+	implementation 'org.neo4j:neo4j-cypher-dsl:2025.2.0'
+	implementation 'org.neo4j.driver:neo4j-java-driver:5.28.9'
+
+	// SPARQL
+	implementation 'org.eclipse.rdf4j:rdf4j-sparqlbuilder:5.2.0'
+	implementation 'org.eclipse.rdf4j:rdf4j-model:5.2.0'
+	implementation 'org.eclipse.rdf4j:rdf4j-repository-sail:5.2.0'
+	implementation 'org.eclipse.rdf4j:rdf4j-sail-memory:5.2.0'
+
+	// Gremlin
+	implementation 'org.apache.tinkerpop:gremlin-driver:3.7.5'
+	implementation 'org.apache.tinkerpop:tinkergraph-gremlin:3.7.5'
+
+	// JanusGraph
+	implementation 'org.janusgraph:janusgraph-driver:1.2.0-20251114-142114.b424a8f'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+springBoot {
+	mainClass = 'com.provframework.capture.Main'
+}
+
+test {
+    exclude '**/IntegrationTest.class' // Exclude all classes ending with IntegrationTest
+	finalizedBy jacocoTestReport // report is always generated after tests run
+}
+
+jacoco {
+	toolVersion = "0.8.14" 
+	reportsDirectory = layout.buildDirectory.dir('jacocoHtml')
+}
+
+jacocoTestReport {
+	dependsOn test // Ensure tests run before report generation
+	reports {
+		xml.required = true
+		csv.required = false
+		html.required = true
+		html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+	}
+}
+
+sonarqube {
+	properties {
+		property "sonar.projectKey", "prov-capture"
+  		property "sonar.projectName", "prov-capture" 
+  		property "sonar.host.url", "http://localhost:9000"
+  		property "sonar.token", "sqp_2c4b9cba645753bbe78aeed7e46547a9095e2421"
+		property "sonar.jacoco.reportPaths", "$buildDir/jacoco/test.exec"
+	}
+}

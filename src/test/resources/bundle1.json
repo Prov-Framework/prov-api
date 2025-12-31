@@ -1,0 +1,21 @@
+{
+    "entities": [ {
+        "id": "Entity 2",
+        "wasDerivedFrom": [ "Entity 1" ],
+        "wasAttributedTo": [ "Person Agent" ],
+        "wasGeneratedBy": [ "Activity 2" ]
+    }],
+    "agents": [{
+        "id": "Person Agent",
+        "actedOnBehalfOf": [ "Organization Agent" ]
+    }],
+    "activities": [{
+        "id": "Activity 2",
+        "startedAtTime": "2025-01-25T11:30:00Z",
+        "endedAtTime": "2025-01-25T11:30:14Z",
+        "atLocation": "42.359780, -71.092070",
+        "wasAssociatedWith": [ "Person Agent" ],
+        "wasInformedBy": [ "Activity 1" ],
+        "used": [ "Entity 1" ]
+    }]
+}
