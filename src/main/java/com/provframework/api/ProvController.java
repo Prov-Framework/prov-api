@@ -4,10 +4,13 @@ import java.util.List;
 
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.vocabulary.PROV;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.provframework.api.errors.BadRequestException;
 import com.provframework.api.sparql.SparqlDriver;
 import com.provframework.build.java.Bundle;
 
@@ -36,7 +39,7 @@ public class ProvController {
     }
 
     @GetMapping("neighbors")
-    public Bundle getNeighbors(String label, String type) {
+    public ResponseEntity<Bundle> getNeighbors(String label, String type) {
         IRI typeIri;
         if (type.toLowerCase().equals("entity")) {
             typeIri = PROV.ENTITY;
@@ -45,9 +48,9 @@ public class ProvController {
         } else if (type.toLowerCase().equals("agent")) {
             typeIri = PROV.AGENT;
         } else {
-            throw new IllegalArgumentException("Invalid type: " + type);
+            throw new BadRequestException("Type must be one of three values: [ENTITY, ACTIVITY, AGENT]");
         }
         
-        return this.sparqlDriver.getNeighbors(label, typeIri);
+        return new ResponseEntity<>(this.sparqlDriver.getNeighbors(label, typeIri), HttpStatus.OK);
     }
 }
